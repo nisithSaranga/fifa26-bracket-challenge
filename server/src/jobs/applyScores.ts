@@ -1,7 +1,7 @@
 /**
- * Awards points for all FINISHED matches whose predictions
- * haven't been scored yet. Safe to run repeatedly — it only touches
- * predictions where pointsAwarded is still null. Run: npm run score
+ * Awards points for finished, not-yet-scored predictions.
+ * Refactored into a reusable function for the cron worker;
+ * still runnable directly via: npm run score
  */
 import mongoose from 'mongoose';
 import { connectDB } from '../config/db';
@@ -9,15 +9,13 @@ import { Match } from '../models/Match';
 import { MatchPrediction } from '../models/MatchPrediction';
 import { scorePrediction } from '../services/scoring';
 
-async function applyScores() {
-  await connectDB();
-
+/** Returns how many predictions were scored in this pass. */
+export async function applyScores(): Promise<number> {
   const finished = await Match.find({
     status: 'FINISHED',
     'score.home': { $ne: null },
     'score.away': { $ne: null },
   });
-  console.log(`${finished.length} finished matches found`);
 
   let scored = 0;
   for (const match of finished) {
@@ -31,9 +29,15 @@ async function applyScores() {
       scored++;
     }
   }
-
-  console.log(`Scored ${scored} predictions.`);
-  await mongoose.disconnect();
+  return scored;
 }
 
-applyScores();
+/** Allow direct execution: npm run score */
+if (require.main === module) {
+  (async () => {
+    await connectDB();
+    const scored = await applyScores();
+    console.log(`Scored ${scored} predictions.`);
+    await mongoose.disconnect();
+  })();
+}
