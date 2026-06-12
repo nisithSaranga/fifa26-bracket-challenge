@@ -1,26 +1,45 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/*
+ * Stadium-at-night design tokens.
+ * Tailwind v4 reads this @theme block and generates utility classes
+ * from it: --color-gold becomes bg-gold / text-gold / border-gold,
+ * --font-display becomes font-display, and so on. One source of truth.
+ */
+@theme {
+  /* Surfaces — deep navy-black, like broadcast graphics, never pure black */
+  --color-pitch: #0a0e14;        /* page background */
+  --color-panel: #11161f;        /* cards, panels */
+  --color-panel-raised: #1a212e; /* hover / elevated panels */
+  --color-line: #232b3a;         /* borders, dividers */
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  /* The trophy color — points, ranks, CTAs. Spent carefully. */
+  --color-gold: #e8b923;
+  --color-gold-deep: #b8890b;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Pitch green — STRICTLY for live states */
+  --color-live: #22c55e;
+
+  /* Text */
+  --color-ink: #e7ecf3;          /* primary text */
+  --color-ink-dim: #8b95a7;      /* secondary text */
+
+  /* Type roles — wired to next/font variables set in layout.tsx */
+  --font-display: var(--font-archivo);
+  --font-body: var(--font-inter);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-pitch);
+  color: var(--color-ink);
+  font-family: var(--font-body), system-ui, sans-serif;
+}
+
+/*
+ * Signature element: the angled card — broadcast lower-third / FUT
+ * card corner cut. One reusable class, used everywhere match data
+ * appears, so the whole product shares one recognizable silhouette.
+ */
+.card-angled {
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
 }
