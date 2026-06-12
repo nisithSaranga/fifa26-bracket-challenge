@@ -7,6 +7,7 @@ import authRoutes from './routes/auth.routes';
 import matchRoutes from './routes/match.routes';
 import { errorHandler } from './middleware/errorHandler';
 import predictionRoutes from './routes/prediction.routes';
+import leaderboardRoutes from './routes/leaderboard.routes';
 
 /**
  * The Express app, assembled in one place.
@@ -33,6 +34,7 @@ export function createApp() {
   app.use('/api/auth', authRoutes);
   app.use('/api/matches', matchRoutes);
   app.use('/api/predictions', predictionRoutes);
+  app.use('/api/leaderboard', leaderboardRoutes);
 
   app.use(errorHandler);                   // must be registered LAST
   return app;
