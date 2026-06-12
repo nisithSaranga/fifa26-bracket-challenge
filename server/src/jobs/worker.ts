@@ -12,6 +12,8 @@
 import cron from 'node-cron';
 import { syncMatches } from './syncMatches';
 import { applyScores } from './applyScores';
+import { getIO } from '../config/socket';
+import { Match } from '../models/Match';
 
 let isRunning = false;
 
@@ -27,6 +29,21 @@ export function startWorker(): void {
       const changedIds = await syncMatches();
       if (changedIds.length > 0) {
         console.log(`[worker] ${changedIds.length} matches changed:`, changedIds);
+        // Push each changed match into its Socket.io room
+      const io = getIO();
+      if (io) {
+        const changedMatches = await Match.find({ fdMatchId: { $in: changedIds } });
+        for (const m of changedMatches) {
+          io.to(`match:${m.fdMatchId}`).emit('match:update', {
+            fdMatchId: m.fdMatchId,
+            status: m.status,
+            minute: m.minute,
+            score: m.score,
+          });
+        }
+        // Light global ping so list pages can refresh themselves
+        io.emit('matches:changed', { fdMatchIds: changedIds });
+      }
         const scored = await applyScores();
         if (scored > 0) console.log(`[worker] scored ${scored} predictions`);
       }
