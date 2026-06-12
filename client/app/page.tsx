@@ -1,33 +1,47 @@
+import MatchCard from "@/components/MatchCard";
+import { getLiveMatches, getUpcomingMatches } from "@/lib/api";
+
 /**
- * TEMPORARY theme smoke-test page.
- * Proves: colors, both fonts, and the angled-card signature render.
- * Will be replaced by the real home page.
+ * Home — temporary layout, real data.
+ * This is a SERVER component: it runs on the Next.js server, calls our
+ * API there, and ships finished HTML to the browser.
  */
-export default function Home() {
+export default async function Home() {
+  const [{ matches: live }, { matches: upcoming }] = await Promise.all([
+    getLiveMatches(),
+    getUpcomingMatches(),
+  ]);
+
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center gap-10 p-8">
-      <div className="text-center">
-        <p className="text-ink-dim tracking-[0.35em] text-sm font-body uppercase">
+    <main className="min-h-screen max-w-5xl mx-auto px-6 py-14">
+      <header className="text-center mb-14">
+        <p className="text-ink-dim tracking-[0.35em] text-xs font-body uppercase">
           June 11 — July 19, 2026
         </p>
-        <h1 className="font-display font-black text-6xl tracking-tight mt-3">
-          FIFA 2026
-          <span className="text-gold"> BRACKET CHALLENGE</span>
+        <h1 className="font-display font-black text-5xl tracking-tight mt-2">
+          FIFA 2026 <span className="text-gold">BRACKET CHALLENGE</span>
         </h1>
-      </div>
+      </header>
 
-      {/* Signature angled card — a fake match to test the silhouette */}
-      <div className="card-angled bg-panel border border-line p-6 w-full max-w-md">
-        <div className="flex items-center justify-between">
-          <span className="font-display font-bold text-2xl">MEX</span>
-          <span className="font-display font-black text-4xl text-gold">2 — 1</span>
-          <span className="font-display font-bold text-2xl">RSA</span>
+      {live.length > 0 && (
+        <section className="mb-12">
+          <h2 className="font-display font-bold text-xl tracking-wide text-live mb-5">
+            ● LIVE NOW
+          </h2>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {live.map((m) => <MatchCard key={m._id} match={m} />)}
+          </div>
+        </section>
+      )}
+
+      <section>
+        <h2 className="font-display font-bold text-xl tracking-wide mb-5">
+          UPCOMING <span className="text-gold">MATCHES</span>
+        </h2>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {upcoming.map((m) => <MatchCard key={m._id} match={m} />)}
         </div>
-        <div className="flex items-center justify-center gap-2 mt-4">
-          <span className="h-2 w-2 rounded-full bg-live animate-pulse" />
-          <span className="text-live text-xs tracking-widest font-body">LIVE — 78&apos;</span>
-        </div>
-      </div>
+      </section>
     </main>
   );
 }
