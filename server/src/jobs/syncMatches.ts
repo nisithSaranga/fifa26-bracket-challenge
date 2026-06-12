@@ -1,13 +1,9 @@
 /**
  * Fixture & result sync — football-data.org v4.
  *
- * Pulls all 104 World Cup matches and UPSERTS them into MongoDB,
- * keyed by fdMatchId. Safe to run repeatedly:
- *  - first run  -> inserts every fixture
- *  - later runs -> updates scores, statuses, knockout pairings
- *
- * Run manually:  npm run sync
- * (Phase 2 wraps this in a cron worker + Socket.io push.)
+ * Refactored from a one-shot script into a reusable function so the
+ * cron worker can call it on a schedule. The npm script still works:
+ * run directly (npm run sync), it executes once and exits.
  */
 import mongoose from 'mongoose';
 import { connectDB } from '../config/db';
@@ -41,7 +37,6 @@ interface FdMatch {
 function mapTeam(t: FdTeam) {
   return {
     fdId: t.id ?? null,
-    // Knockout slots are "TBD" until qualified — store a placeholder
     name: t.name ?? 'To be determined',
     shortName: t.shortName ?? '',
     tla: t.tla ?? '',
@@ -49,61 +44,65 @@ function mapTeam(t: FdTeam) {
   };
 }
 
-async function sync() {
+/**
+ * Pull all WC matches and upsert into MongoDB.
+ * Returns the fdMatchIds of matches whose data CHANGED —
+ * the worker uses this to know what to broadcast via Socket.io.
+ */
+export async function syncMatches(): Promise<number[]> {
   if (!env.footballDataKey) {
-    console.error('FOOTBALL_DATA_KEY missing in .env — get a free key at football-data.org');
-    process.exit(1);
+    throw new Error('FOOTBALL_DATA_KEY missing in .env');
   }
 
-  await connectDB();
-
-  console.log('Fetching World Cup fixtures from football-data.org ...');
   const resp = await fetch(FD_URL, {
     headers: { 'X-Auth-Token': env.footballDataKey },
   });
-
   if (!resp.ok) {
-    console.error(`API error ${resp.status}: ${await resp.text()}`);
-    process.exit(1);
+    throw new Error(`football-data API error ${resp.status}`);
   }
 
   const data = (await resp.json()) as { matches: FdMatch[] };
-  console.log(`Received ${data.matches.length} matches. Upserting ...`);
+  const changedIds: number[] = [];
 
-  // bulkWrite = one round-trip to MongoDB instead of 104
-  const ops = data.matches.map((m) => ({
-    updateOne: {
-      filter: { fdMatchId: m.id },
-      update: {
-        $set: {
-          fdMatchId: m.id,
-          stage: m.stage,
-          group: m.group ?? null,
-          matchday: m.matchday ?? null,
-          kickoff: new Date(m.utcDate),
-          // football-data.org statuses match our union; assert the type
-          status: m.status as MatchStatus,
-          minute: m.minute ?? null,
-          venue: m.venue ?? null,
-          homeTeam: mapTeam(m.homeTeam),
-          awayTeam: mapTeam(m.awayTeam),
-          score: {
-            home: m.score.fullTime.home,
-            away: m.score.fullTime.away,
-          },
-          lastSyncedAt: new Date(),
-        },
-      },
-      upsert: true,
-    },
-  }));
+  for (const m of data.matches) {
+    const update = {
+      fdMatchId: m.id,
+      stage: m.stage,
+      group: m.group ?? null,
+      matchday: m.matchday ?? null,
+      kickoff: new Date(m.utcDate),
+      status: m.status as MatchStatus,
+      minute: m.minute ?? null,
+      venue: m.venue ?? null,
+      homeTeam: mapTeam(m.homeTeam),
+      awayTeam: mapTeam(m.awayTeam),
+      score: { home: m.score.fullTime.home, away: m.score.fullTime.away },
+      lastSyncedAt: new Date(),
+    };
 
-  const result = await Match.bulkWrite(ops);
-  console.log(
-    `Done. inserted=${result.upsertedCount} updated=${result.modifiedCount} total=${ops.length}`
-  );
+    // Compare against what we have — only count it as changed if
+    // score/status/minute actually differ (the fields users care about).
+    const existing = await Match.findOne({ fdMatchId: m.id });
+    const changed =
+      !existing ||
+      existing.status !== update.status ||
+      existing.minute !== update.minute ||
+      existing.score.home !== update.score.home ||
+      existing.score.away !== update.score.away;
 
-  await mongoose.disconnect();
+    await Match.updateOne({ fdMatchId: m.id }, { $set: update }, { upsert: true });
+    if (changed) changedIds.push(m.id);
+  }
+
+  return changedIds;
 }
 
-sync();
+/** Allow direct execution: npm run sync */
+if (require.main === module) {
+  (async () => {
+    await connectDB();
+    const changed = await syncMatches();
+    console.log(`Sync complete. ${changed.length} matches changed.`);
+    await mongoose.disconnect();
+  })();
+}
