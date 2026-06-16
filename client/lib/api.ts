@@ -45,3 +45,41 @@ export function getLiveMatches() {
 export function getFinishedMatches() {
   return get<{ count: number; matches: Match[] }>("/api/matches?status=FINISHED");
 }
+
+/* ---------- Auth ---------- */
+
+export interface AuthUser {
+  id: string;
+  username: string;
+  email: string;
+}
+
+interface AuthResponse {
+  accessToken: string;
+  user: AuthUser;
+}
+
+async function post<T>(path: string, body: unknown): Promise<T> {
+  const res = await fetch(`${API_URL}${path}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include", // send/receive the httpOnly refresh cookie
+    body: JSON.stringify(body),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error ?? `Request failed (${res.status})`);
+  return data as T;
+}
+
+export function registerUser(input: {
+  username: string;
+  email: string;
+  password: string;
+  country?: string;
+}) {
+  return post<AuthResponse>("/api/auth/register", input);
+}
+
+export function loginUser(input: { emailOrUsername: string; password: string }) {
+  return post<AuthResponse>("/api/auth/login", input);
+}
