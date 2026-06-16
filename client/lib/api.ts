@@ -83,3 +83,53 @@ export function registerUser(input: {
 export function loginUser(input: { emailOrUsername: string; password: string }) {
   return post<AuthResponse>("/api/auth/login", input);
 }
+
+/* ---------- Predictions ---------- */
+
+export interface MatchPrediction {
+  _id: string;
+  match: string;
+  predictedHome: number;
+  predictedAway: number;
+  pointsAwarded: number | null;
+}
+
+/** Authenticated calls need the access token in the header. */
+function authPost<T>(path: string, token: string, body: unknown): Promise<T> {
+  return authRequest<T>(path, token, "PUT", body);
+}
+
+async function authRequest<T>(path: string, token: string, method: string, body?: unknown): Promise<T> {
+  const res = await fetch(`${API_URL}${path}`, {
+    method,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error ?? `Request failed (${res.status})`);
+  return data as T;
+}
+
+export function savePrediction(
+  token: string,
+  matchId: string,
+  predictedHome: number,
+  predictedAway: number
+) {
+  return authPost<{ prediction: MatchPrediction }>(
+    `/api/predictions/${matchId}`,
+    token,
+    { predictedHome, predictedAway }
+  );
+}
+
+export function getMyPredictions(token: string) {
+  return authRequest<{ count: number; predictions: MatchPrediction[] }>(
+    "/api/predictions/mine",
+    token,
+    "GET"
+  );
+}
