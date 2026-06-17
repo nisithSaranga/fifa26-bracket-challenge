@@ -18,6 +18,9 @@ export default function Header() {
         <MuteToggle />
           {loading ? null : user ? (
             <>
+            <Link href="/my-predictions" className="text-ink-dim hover:text-gold transition-colors">
+                My Predictions
+              </Link>
               <span className="text-ink-dim">
                 Hi, <span className="text-ink font-medium">{user.username}</span>
               </span>
