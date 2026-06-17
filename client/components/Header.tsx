@@ -16,6 +16,9 @@ export default function Header() {
 
         <nav className="flex items-center gap-5 font-body text-sm">
         <MuteToggle />
+        <Link href="/leaderboard" className="text-ink-dim hover:text-gold transition-colors">
+            Leaderboard
+          </Link>
           {loading ? null : user ? (
             <>
             <Link href="/my-predictions" className="text-ink-dim hover:text-gold transition-colors">

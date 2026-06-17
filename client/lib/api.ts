@@ -133,3 +133,17 @@ export function getMyPredictions(token: string) {
     "GET"
   );
 }
+/* ---------- Leaderboard ---------- */
+
+export interface LeaderboardRow {
+  rank: number;
+  username: string;
+  country?: string;
+  totalPoints: number;
+  predictionsScored: number;
+  exactScores: number;
+}
+
+export function getLeaderboard() {
+  return get<{ leaderboard: LeaderboardRow[] }>("/api/leaderboard");
+}
