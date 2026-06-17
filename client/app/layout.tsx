@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Archivo, Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth-context";
+import Header from "@/components/Header";
+import { AudioProvider } from "@/lib/audio-context";
+import Splash from "@/components/Splash";
 
 /*
  * next/font downloads the fonts at BUILD time and self-hosts them —
@@ -30,7 +33,15 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${archivo.variable} ${inter.variable}`}>
-      <body className="antialiased"><AuthProvider>{children}</AuthProvider></body>
+      <body className="antialiased">
+        <AuthProvider>
+          <AudioProvider>
+            <Splash />
+            <Header />
+            {children}
+          </AudioProvider>
+        </AuthProvider>
+        </body>
     </html>
   );
 }
