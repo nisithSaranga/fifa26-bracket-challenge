@@ -43,3 +43,12 @@ body {
 .card-angled {
   clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
 }
+/* Kill Chrome's autofill white background that breaks the dark theme */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--color-ink);
+  -webkit-box-shadow: 0 0 0px 1000px var(--color-panel) inset;
+  caret-color: var(--color-ink);
+  transition: background-color 9999s ease-in-out 0s;
+}
