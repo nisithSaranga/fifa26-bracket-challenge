@@ -8,6 +8,7 @@ import matchRoutes from './routes/match.routes';
 import { errorHandler } from './middleware/errorHandler';
 import predictionRoutes from './routes/prediction.routes';
 import leaderboardRoutes from './routes/leaderboard.routes';
+import standingsRoutes from "./routes/standings.routes";
 
 /**
  * The Express app, assembled in one place.
@@ -35,6 +36,7 @@ export function createApp() {
   app.use('/api/matches', matchRoutes);
   app.use('/api/predictions', predictionRoutes);
   app.use('/api/leaderboard', leaderboardRoutes);
+  app.use("/api/standings", standingsRoutes);
 
   app.use(errorHandler);                   // must be registered LAST
   return app;
