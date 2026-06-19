@@ -11,7 +11,7 @@ export default function MuteToggle() {
       onClick={toggleMute}
       aria-label={muted ? "Unmute music" : "Mute music"}
       title={muted ? "Unmute" : "Mute"}
-      className="text-ink-dim hover:text-gold transition-colors text-lg"
+      className="text-ink-dim hover:text-volt transition-colors text-lg"
     >
       {muted ? "🔇" : "🔊"}
     </button>

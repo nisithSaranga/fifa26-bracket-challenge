@@ -8,10 +8,10 @@ export default async function LeaderboardPage() {
   const { leaderboard } = await getLeaderboard();
 
   return (
-    <main className="max-w-3xl mx-auto px-6 py-14">
+    <main className="max-w-3xl mx-auto px-6 py-10 min-h-[70vh]">
       <header className="mb-10">
         <h1 className="font-display font-black text-4xl tracking-tight">
-          LEADER<span className="text-gold">BOARD</span>
+          LEADER<span className="text-volt">BOARD</span>
         </h1>
         <p className="text-ink-dim font-body mt-2">Match Predictor standings · top 100</p>
       </header>
@@ -35,15 +35,15 @@ export default async function LeaderboardPage() {
             <div
               key={row.rank}
               className={`card-angled border px-4 py-3 grid grid-cols-[40px_1fr_70px_70px_60px] gap-3 items-center
-                ${row.rank <= 3 ? "bg-panel-raised border-gold-deep" : "bg-panel border-line"}`}
+                ${row.rank <= 3 ? "bg-panel-raised border-volt" : "bg-panel border-line"}`}
             >
-              <span className={`font-display font-black text-lg ${row.rank <= 3 ? "text-gold" : "text-ink-dim"}`}>
+              <span className={`font-display font-black text-lg ${row.rank <= 3 ? "text-volt" : "text-ink-dim"}`}>
                 {row.rank}
               </span>
               <span className="font-display font-bold truncate">{row.username}</span>
               <span className="text-center font-body text-ink-dim">{row.predictionsScored}</span>
               <span className="text-center font-body text-live">{row.exactScores}</span>
-              <span className="text-right font-display font-black text-xl text-gold">{row.totalPoints}</span>
+              <span className="text-right font-display font-black text-xl text-volt">{row.totalPoints}</span>
             </div>
           ))}
         </div>

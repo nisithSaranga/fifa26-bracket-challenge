@@ -16,7 +16,7 @@ export default function Field({ label, type = "text", value, onChange, placehold
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         className="mt-1.5 w-full bg-panel border border-line rounded-none px-4 py-3 font-body text-ink
-                   focus:outline-none focus:border-gold transition-colors"
+                   focus:outline-none focus:border-volt transition-colors"
       />
     </label>
   );
