@@ -5,6 +5,8 @@ import { AuthProvider } from "@/lib/auth-context";
 import Header from "@/components/Header";
 import { AudioProvider } from "@/lib/audio-context";
 import Splash from "@/components/Splash";
+import Footer from "@/components/Footer";
+import BottomBar from "@/components/BottomBar";
 
 /*
  * next/font downloads the fonts at BUILD time and self-hosts them —
@@ -34,11 +36,13 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${archivo.variable} ${inter.variable}`}>
       <body className="antialiased">
-        <AuthProvider>
+    <AuthProvider>
           <AudioProvider>
             <Splash />
             <Header />
             {children}
+            <Footer />
+            <BottomBar />
           </AudioProvider>
         </AuthProvider>
         </body>
