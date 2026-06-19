@@ -26,7 +26,7 @@ export default function MatchCard({ match }: { match: Match }) {
         <TeamSide team={match.homeTeam} />
         <div className="text-center min-w-[90px]">
           {isLive || isFinished ? (
-            <span className="font-display font-black text-3xl text-gold">
+            <span className="font-display font-black text-3xl text-volt">
               {match.score.home} — {match.score.away}
             </span>
           ) : (
@@ -73,14 +73,14 @@ export default function MatchCard({ match }: { match: Match }) {
           {!user ? (
             <Link
               href="/login"
-              className="block text-center text-gold text-xs font-body tracking-wide hover:underline"
+              className="block text-center text-volt text-xs font-body tracking-wide hover:underline"
             >
               Sign in to predict →
             </Link>
           ) : !open ? (
             <button
               onClick={() => setOpen(true)}
-              className="w-full border border-gold text-gold font-display font-bold text-sm tracking-wide py-2 hover:bg-gold hover:text-pitch transition-colors"
+              className="w-full border border-volt text-volt font-display font-bold text-sm tracking-wide py-2 hover:bg-volt hover:text-pitch transition-colors"
             >
               PREDICT
             </button>

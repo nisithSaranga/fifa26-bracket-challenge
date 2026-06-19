@@ -41,6 +41,12 @@ export default function PredictionForm({
     }
   }
 
+  // Saved state gets a distinct success look; otherwise the volt gradient.
+  const buttonClass =
+    status === "saved"
+      ? "mt-3 w-full bg-live/20 border border-live text-live font-display font-bold text-sm tracking-wide py-2.5 rounded-md transition-colors"
+      : "mt-3 w-full btn-volt text-white font-display font-bold text-sm tracking-wide py-2.5 rounded-md disabled:opacity-50";
+
   return (
     <div className="mt-4 pt-4 border-t border-line">
       <div className="flex items-center justify-center gap-3">
@@ -49,13 +55,12 @@ export default function PredictionForm({
         <Stepper label={awayTla} value={away} onChange={setAway} />
       </div>
 
-      <button
-        onClick={save}
-        disabled={status === "saving"}
-        className="mt-3 w-full bg-gold text-pitch font-display font-bold text-sm tracking-wide py-2
-                   hover:bg-gold-deep transition-colors disabled:opacity-50"
-      >
-        {status === "saving" ? "SAVING..." : status === "saved" ? "PREDICTION SAVED ✓" : "SAVE PREDICTION"}
+      <button onClick={save} disabled={status === "saving"} className={buttonClass}>
+        {status === "saving"
+          ? "SAVING..."
+          : status === "saved"
+          ? "PREDICTION SAVED ✓"
+          : "SAVE PREDICTION"}
       </button>
 
       {message && <p className="text-red-400 text-xs font-body mt-2 text-center">{message}</p>}
@@ -70,14 +75,14 @@ function Stepper({ label, value, onChange }: { label: string; value: number; onC
       <div className="flex items-center gap-2">
         <button
           onClick={() => onChange(Math.max(0, value - 1))}
-          className="h-7 w-7 border border-line text-ink-dim hover:border-gold hover:text-gold transition-colors font-display"
+          className="h-8 w-8 border border-line text-ink-dim hover:border-volt hover:text-volt-bright hover:bg-volt/10 transition-colors font-display rounded"
         >
           −
         </button>
-        <span className="font-display font-black text-2xl w-6 text-center">{value}</span>
+        <span className="font-display font-black text-2xl w-7 text-center">{value}</span>
         <button
           onClick={() => onChange(Math.min(20, value + 1))}
-          className="h-7 w-7 border border-line text-ink-dim hover:border-gold hover:text-gold transition-colors font-display"
+          className="h-8 w-8 border border-line text-ink-dim hover:border-volt hover:text-volt-bright hover:bg-volt/10 transition-colors font-display rounded"
         >
           +
         </button>

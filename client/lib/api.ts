@@ -147,3 +147,27 @@ export interface LeaderboardRow {
 export function getLeaderboard() {
   return get<{ leaderboard: LeaderboardRow[] }>("/api/leaderboard");
 }
+/* ---------- Standings ---------- */
+
+export interface StandingTeam {
+  tla: string;
+  name: string;
+  crest: string;
+  played: number;
+  won: number;
+  drawn: number;
+  lost: number;
+  goalsFor: number;
+  goalsAgainst: number;
+  goalDiff: number;
+  points: number;
+}
+
+export interface GroupStanding {
+  group: string;
+  teams: StandingTeam[];
+}
+
+export function getStandings() {
+  return get<{ standings: GroupStanding[] }>("/api/standings");
+}
