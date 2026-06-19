@@ -1,54 +1,136 @@
 @import "tailwindcss";
 
 /*
- * Stadium-at-night design tokens.
- * Tailwind v4 reads this @theme block and generates utility classes
- * from it: --color-gold becomes bg-gold / text-gold / border-gold,
- * --font-display becomes font-display, and so on. One source of truth.
+ * Electric-blue gaming theme.
+ * Tailwind v4 reads @theme and generates utilities: --color-volt becomes
+ * bg-volt / text-volt / border-volt, etc. One source of truth.
  */
 @theme {
-  /* Surfaces — deep navy-black, like broadcast graphics, never pure black */
-  --color-pitch: #0a0e14;        /* page background */
-  --color-panel: #11161f;        /* cards, panels */
-  --color-panel-raised: #1a212e; /* hover / elevated panels */
-  --color-line: #232b3a;         /* borders, dividers */
+  /* Surfaces — deep blue-black, not pure black */
+  --color-pitch: #040a16;        /* page background base */
+  --color-panel: #0b1422;        /* cards, panels */
+  --color-panel-raised: #122036; /* elevated panels */
+  --color-line: #1e2d44;         /* borders, dividers */
 
-  /* The trophy color — points, ranks, CTAs. Spent carefully. */
-  --color-gold: #e8b923;
-  --color-gold-deep: #b8890b;
+  /* Electric blue — the primary accent (replaces gold everywhere) */
+  --color-volt: #3b82f6;         /* primary blue */
+  --color-volt-bright: #60a5fa;  /* lighter blue for text/highlights */
+  --color-cyan: #06b6d4;         /* cyan, the secondary accent */
+  --color-cyan-bright: #22d3ee;
 
-  /* Pitch green — STRICTLY for live states */
-  --color-live: #22c55e;
+  /* Live state — kept distinct: warm coral so LIVE never blends with the blue UI */
+  --color-live: #fb7185;
 
   /* Text */
-  --color-ink: #e7ecf3;          /* primary text */
-  --color-ink-dim: #8b95a7;      /* secondary text */
+  --color-ink: #eaf2ff;          /* primary text, slight blue-white */
+  --color-ink-dim: #7e93b4;      /* secondary text, muted blue-gray */
+}
 
-  /* Type roles — wired to next/font variables set in layout.tsx */
+/* Fonts wired separately (Tailwind v4 quirk: keep these out of @theme) */
+:root {
   --font-display: var(--font-archivo);
   --font-body: var(--font-inter);
 }
 
+/*
+ * Body — text, font, and the layered neon-blue gradient atmosphere.
+ */
 body {
-  background-color: var(--color-pitch);
   color: var(--color-ink);
   font-family: var(--font-body), system-ui, sans-serif;
+  background:
+    radial-gradient(900px circle at 8% -6%, rgba(59, 130, 246, 0.22), transparent 46%),
+    radial-gradient(800px circle at 100% 4%, rgba(6, 182, 212, 0.18), transparent 44%),
+    radial-gradient(1100px circle at 50% 120%, rgba(99, 102, 241, 0.12), transparent 52%),
+    var(--color-pitch);
+  background-attachment: fixed;
+  min-height: 100vh;
 }
 
-/*
- * Signature element: the angled card — broadcast lower-third / FUT
- * card corner cut. One reusable class, used everywhere match data
- * appears, so the whole product shares one recognizable silhouette.
- */
+/* ---- Reusable surfaces & effects ---- */
+
+/* Signature angled card silhouette */
 .card-angled {
   clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
 }
-/* Kill Chrome's autofill white background that breaks the dark theme */
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus {
+
+/* Gradient panel fill for cards */
+.panel-gradient {
+  background: linear-gradient(155deg, rgba(59, 130, 246, 0.10), rgba(11, 20, 34, 0.85) 55%, rgba(8, 14, 26, 0.95));
+}
+
+/* Strong hero panel with neon edge glow */
+.panel-hero {
+  background: linear-gradient(150deg, rgba(59, 130, 246, 0.18), rgba(6, 182, 212, 0.08) 50%, rgba(8, 14, 26, 0.7));
+  box-shadow: 0 0 50px rgba(59, 130, 246, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* Card hover: lift + blue glow */
+.card-hover {
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.card-hover:hover {
+  transform: translateY(-4px);
+  border-color: rgba(96, 165, 250, 0.6);
+  box-shadow: 0 10px 34px rgba(0, 0, 0, 0.5), 0 0 28px rgba(59, 130, 246, 0.22);
+}
+
+/* Solid gradient button (nav tiles, CTAs) */
+.btn-volt {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  box-shadow: 0 0 22px rgba(59, 130, 246, 0.35);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+.btn-volt:hover { transform: translateY(-2px); filter: brightness(1.12); box-shadow: 0 0 30px rgba(59, 130, 246, 0.5); }
+
+.btn-cyan { background: linear-gradient(135deg, #06b6d4, #0e7490); box-shadow: 0 0 22px rgba(6, 182, 212, 0.35); }
+.btn-cyan:hover { transform: translateY(-2px); filter: brightness(1.12); box-shadow: 0 0 30px rgba(6, 182, 212, 0.5); }
+
+/* Gradient nav pill (header buttons) */
+.nav-pill {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.22), rgba(6, 182, 212, 0.12));
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  transition: all 0.2s ease;
+}
+.nav-pill:hover { border-color: rgba(96, 165, 250, 0.8); box-shadow: 0 0 18px rgba(59, 130, 246, 0.3); }
+
+/* Gradient text */
+.text-gradient-volt {
+  background: linear-gradient(135deg, #7dd3fc, #3b82f6);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+
+/* Animated shine sweep for hero title */
+@keyframes sweep { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
+.text-sweep {
+  background: linear-gradient(90deg, #3b82f6, #67e8f9, #3b82f6);
+  background-size: 200% auto;
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  animation: sweep 4s linear infinite;
+}
+
+/* Live pulse — coral, distinct from blue */
+@keyframes livePulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(251, 113, 133, 0.6); }
+  50% { box-shadow: 0 0 0 8px rgba(251, 113, 133, 0); }
+}
+.live-pulse { animation: livePulse 1.6s infinite; }
+
+/* Section header accent line */
+.accent-line::before {
+  content: ""; display: inline-block; width: 28px; height: 3px;
+  background: linear-gradient(90deg, var(--color-volt), transparent);
+  margin-right: 10px; vertical-align: middle;
+}
+
+/* Chrome autofill fix */
+input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus {
   -webkit-text-fill-color: var(--color-ink);
   -webkit-box-shadow: 0 0 0px 1000px var(--color-panel) inset;
   caret-color: var(--color-ink);
   transition: background-color 9999s ease-in-out 0s;
+}
+/* Leave room for the fixed mobile bottom bar so it never covers content */
+@media (max-width: 640px) {
+  body { padding-bottom: 4rem; }
 }
