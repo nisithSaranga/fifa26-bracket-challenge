@@ -5,6 +5,7 @@ import Countdown from "@/components/Countdown";
 import StandingsAside from "@/components/StandingsAside";
 import StatCounter from "@/components/StatCounter";
 import HomeReveal from "@/components/HomeReveal";
+import Splash from "@/components/Splash";
 
 export default async function Home() {
   const [{ matches: live }, { matches: upcoming }, finishedRes] = await Promise.all([
@@ -23,6 +24,7 @@ export default async function Home() {
 
   return (
     <main className="max-w-6xl mx-auto px-6 py-8">
+      <Splash/>
       <HomeReveal>
         {/* ===== SLIM TITLE BANNER ===== */}
         <section className="card-angled panel-hero border border-line px-8 py-6 mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">

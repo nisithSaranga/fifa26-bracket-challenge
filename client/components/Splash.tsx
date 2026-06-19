@@ -4,20 +4,21 @@ import { useState, useEffect } from "react";
 import { useAudio } from "@/lib/audio-context";
 
 /**
- * Cinematic intro — shows ONCE per browser session, not on every page.
- * We record a flag in sessionStorage after the user enters, so navigating
- * to /leaderboard etc. doesn't re-trigger it.
+ * Cinematic intro. Shows on a fresh visit; hidden once the user has
+ * entered this browser session (so it doesn't re-trigger on navigation).
  */
 export default function Splash() {
   const { start } = useAudio();
   const [leaving, setLeaving] = useState(false);
-  // Start "gone" until we've checked sessionStorage (avoids a flash on inner pages)
-  const [gone, setGone] = useState(true);
+  const [gone, setGone] = useState(false); // visible by default
 
   useEffect(() => {
-    // Only show the splash if we haven't already entered this session.
-    const entered = sessionStorage.getItem("fifa26_entered");
-    if (!entered) setGone(false);
+    const raf = requestAnimationFrame(() => {
+      if (sessionStorage.getItem("fifa26_entered")) {
+        setGone(true); // already entered this session -> skip splash
+      }
+    });
+    return () => cancelAnimationFrame(raf);
   }, []);
 
   function enter() {
@@ -45,15 +46,10 @@ export default function Splash() {
 
       <button
         onClick={enter}
-        className="mt-12 btn-volt text-white font-display font-bold text-lg tracking-[0.2em]
-                   px-10 py-4 rounded-md"
+        className="mt-12 btn-volt text-white font-display font-bold text-lg tracking-[0.2em] px-10 py-4 rounded-md"
       >
         ENTER STADIUM
       </button>
-
-      <p className="text-ink-dim text-[11px] font-body mt-6 tracking-wide">
-        ♪ Tap to enter with sound
-      </p>
     </div>
   );
 }

@@ -14,10 +14,15 @@ export default function Countdown({ target }: { target: string }) {
   const [now, setNow] = useState(0);
 
   useEffect(() => {
-    setMounted(true);
-    setNow(Date.now());
+    const raf = requestAnimationFrame(() => {
+      setMounted(true);
+      setNow(Date.now());
+    });
     const id = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(id);
+    return () => {
+      cancelAnimationFrame(raf);
+      clearInterval(id);
+    };
   }, []);
 
   const pad = (n: number) => String(n).padStart(2, "0");
