@@ -11,7 +11,8 @@ import { createContext, useContext, useState, useRef, useEffect, ReactNode } fro
 const TRACKS = [
   "/audio/track1.mp3", 
   "/audio/track2.mp3", 
-  "/audio/track3.mp3"];
+  "/audio/track3.mp3",
+  "/audio/track4.mp3"];
 
 interface AudioState {
   started: boolean;
