@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { getLiveMatches, getUpcomingMatches, getFinishedMatches } from "@/lib/api";
-import MatchCard from "@/components/MatchCard";
+import { getLiveMatches, getUpcomingMatches, getFinishedMatches, safe } from "@/lib/api";import MatchCard from "@/components/MatchCard";
 import Countdown from "@/components/Countdown";
 import StandingsAside from "@/components/StandingsAside";
 import StatCounter from "@/components/StatCounter";
@@ -8,12 +7,14 @@ import HomeReveal from "@/components/HomeReveal";
 import Splash from "@/components/Splash";
 
 export default async function Home() {
-  const [{ matches: live }, { matches: upcoming }, finishedRes] = await Promise.all([
-    getLiveMatches(),
-    getUpcomingMatches(),
-    getFinishedMatches(),
+  const [liveRes, upcomingRes, finishedRes] = await Promise.all([
+    safe(getLiveMatches(), { matches: [] }),
+    safe(getUpcomingMatches(), { matches: [] }),
+    safe(getFinishedMatches(), { count: 0, matches: [] }),
   ]);
 
+  const live = liveRes.matches ?? [];
+  const upcoming = upcomingRes.matches ?? [];
   const finished = finishedRes.matches ?? [];
   const featured = live[0] ?? upcoming[0] ?? null;
   const isFeaturedLive = live.length > 0;
@@ -21,7 +22,7 @@ export default async function Home() {
     (sum, m) => sum + (m.score.home ?? 0) + (m.score.away ?? 0),
     0
   );
-
+  
   return (
     <main className="max-w-6xl mx-auto px-6 py-8">
       <Splash/>

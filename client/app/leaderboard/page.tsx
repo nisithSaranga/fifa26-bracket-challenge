@@ -1,12 +1,10 @@
-import { getLeaderboard } from "@/lib/api";
-
+import { getLeaderboard, safe } from "@/lib/api";
 /**
  * Public leaderboard — a server component: fetches on the server,
  * ships finished HTML. Ranks come straight from the aggregation pipeline.
  */
 export default async function LeaderboardPage() {
-  const { leaderboard } = await getLeaderboard();
-
+const { leaderboard } = await safe(getLeaderboard(), { leaderboard: [] });
   return (
     <main className="max-w-3xl mx-auto px-6 py-10 min-h-[70vh]">
       <header className="mb-10">

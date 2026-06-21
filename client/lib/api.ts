@@ -5,6 +5,20 @@
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000";
 
+/**
+ * Wraps a data-fetch so a backend outage never crashes a page.
+ * Returns the provided fallback instead of throwing. Used by server
+ * components that fetch on render — if the API is unreachable, the page
+ * still renders (with empty data) rather than throwing a server error.
+ */
+export async function safe<T>(promise: Promise<T>, fallback: T): Promise<T> {
+  try {
+    return await promise;
+  } catch {
+    return fallback;
+  }
+}
+
 /** Shapes mirrored from the server's Match model. */
 export interface TeamRef {
   fdId: number | null;
