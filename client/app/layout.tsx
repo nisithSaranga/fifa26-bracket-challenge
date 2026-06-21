@@ -1,5 +1,4 @@
-import type { Metadata } from "next";
-import { Archivo, Inter } from "next/font/google";
+import type { Metadata, Viewport } from "next";import { Archivo, Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth-context";
 import Header from "@/components/Header";
@@ -27,6 +26,12 @@ export const metadata: Metadata = {
   title: "FIFA 2026 Bracket Challenge",
   description:
     "Predict the 2026 World Cup — group stages, brackets, and every match. Live scores, leaderboards, and bragging rights.",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
 };
 
 export default function RootLayout({

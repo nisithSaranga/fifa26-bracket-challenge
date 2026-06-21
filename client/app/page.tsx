@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { getLiveMatches, getUpcomingMatches, getFinishedMatches, safe } from "@/lib/api";import MatchCard from "@/components/MatchCard";
+import { getLiveMatches, getUpcomingMatches, getFinishedMatches, safe } from "@/lib/api";
+import MatchCard from "@/components/MatchCard";
 import Countdown from "@/components/Countdown";
 import StandingsAside from "@/components/StandingsAside";
 import StatCounter from "@/components/StatCounter";
@@ -22,7 +23,7 @@ export default async function Home() {
     (sum, m) => sum + (m.score.home ?? 0) + (m.score.away ?? 0),
     0
   );
-  
+
   return (
     <main className="max-w-6xl mx-auto px-6 py-8">
       <Splash/>
@@ -90,9 +91,7 @@ export default async function Home() {
                 {isFeaturedLive && (
                   <div className="flex items-center justify-center gap-2 mt-5">
                     <span className="h-2.5 w-2.5 rounded-full bg-live live-pulse" />
-                    <span className="text-live text-xs tracking-widest font-body">
-                      LIVE{featured.minute != null ? ` — ${featured.minute}'` : ""}
-                    </span>
+                    <span className="text-live text-xs tracking-widest font-body">LIVE</span>
                   </div>
                 )}
               </>
