@@ -61,11 +61,11 @@ export default function MyPredictionsPage() {
     <main className="max-w-3xl mx-auto px-6 py-14">
       <header className="mb-10">
         <h1 className="font-display font-black text-4xl tracking-tight">
-          MY <span className="text-gold">PREDICTIONS</span>
+          MY <span className="text-volt">PREDICTIONS</span>
         </h1>
         <p className="text-ink-dim font-body mt-2">
           {predictions.length} predictions ·{" "}
-          <span className="text-gold font-display font-bold">{totalPoints} pts</span> earned
+          <span className="text-volt font-display font-bold">{totalPoints} pts</span> earned
         </p>
       </header>
 
@@ -92,7 +92,7 @@ function PredictionRow({ p }: { p: PopulatedPrediction }) {
   // Color the points badge by outcome
   const pts = p.pointsAwarded;
   const badge =
-    pts === 3 ? "text-live" : pts === 1 ? "text-gold" : pts === 0 ? "text-ink-dim" : "text-ink-dim";
+    pts === 3 ? "text-live" : pts === 1 ? "text-volt" : pts === 0 ? "text-ink-dim" : "text-ink-dim";
 
   return (
     <div className="card-angled bg-panel border border-line px-5 py-4 flex items-center justify-between gap-4">
@@ -117,7 +117,7 @@ function PredictionRow({ p }: { p: PopulatedPrediction }) {
         {finished ? (
           <>
             <p className="text-ink-dim text-[10px] tracking-widest font-body">RESULT</p>
-            <p className="font-display font-bold text-gold">
+            <p className="font-display font-bold text-volt">
               {m.score.home} — {m.score.away}
             </p>
           </>

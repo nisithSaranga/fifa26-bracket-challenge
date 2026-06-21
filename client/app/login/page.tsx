@@ -31,7 +31,7 @@ export default function LoginPage() {
     <main className="min-h-screen flex items-center justify-center px-6">
       <div className="card-angled bg-panel border border-line p-8 w-full max-w-sm">
         <h1 className="font-display font-black text-3xl mb-1">
-          SIGN <span className="text-gold">IN</span>
+          SIGN <span className="text-volt">IN</span>
         </h1>
         <p className="text-ink-dim text-sm font-body mb-6">Back to the pitch.</p>
 
@@ -45,15 +45,15 @@ export default function LoginPage() {
         <button
           onClick={handleSubmit}
           disabled={submitting}
-          className="mt-6 w-full bg-gold text-pitch font-display font-bold tracking-wide py-3
-                     hover:bg-gold-deep transition-colors disabled:opacity-50"
+          className="mt-6 w-full bg-volt text-pitch font-display font-bold tracking-wide py-3
+                     hover:bg-volt-deep transition-colors disabled:opacity-50"
         >
           {submitting ? "SIGNING IN..." : "SIGN IN"}
         </button>
 
         <p className="text-ink-dim text-sm font-body mt-6 text-center">
           New here?{" "}
-          <Link href="/register" className="text-gold hover:underline">Create an account</Link>
+          <Link href="/register" className="text-volt hover:underline">Create an account</Link>
         </p>
       </div>
     </main>

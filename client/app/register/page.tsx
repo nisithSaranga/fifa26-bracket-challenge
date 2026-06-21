@@ -44,7 +44,7 @@ export default function RegisterPage() {
     <main className="min-h-screen flex items-center justify-center px-6">
       <div className="card-angled bg-panel border border-line p-8 w-full max-w-sm">
         <h1 className="font-display font-black text-3xl mb-1">
-          JOIN THE <span className="text-gold">CHALLENGE</span>
+          JOIN THE <span className="text-volt">CHALLENGE</span>
         </h1>
         <p className="text-ink-dim text-sm font-body mb-6">Make your picks. Climb the table.</p>
 
@@ -61,15 +61,15 @@ export default function RegisterPage() {
         <button
           onClick={handleSubmit}
           disabled={submitting}
-          className="mt-6 w-full bg-gold text-pitch font-display font-bold tracking-wide py-3
-                     hover:bg-gold-deep transition-colors disabled:opacity-50"
+          className="mt-6 w-full bg-volt text-pitch font-display font-bold tracking-wide py-3
+                     hover:bg-volt-deep transition-colors disabled:opacity-50"
         >
           {submitting ? "CREATING..." : "CREATE ACCOUNT"}
         </button>
 
         <p className="text-ink-dim text-sm font-body mt-6 text-center">
           Already playing?{" "}
-          <Link href="/login" className="text-gold hover:underline">Sign in</Link>
+          <Link href="/login" className="text-volt hover:underline">Sign in</Link>
         </p>
       </div>
     </main>
