@@ -11,6 +11,12 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000";
  * components that fetch on render — if the API is unreachable, the page
  * still renders (with empty data) rather than throwing a server error.
  */
+
+/** Route a crest through our backend proxy so it can be exported to canvas. */
+export function proxiedCrest(url: string): string {
+  return `${API_URL}/api/crest?url=${encodeURIComponent(url)}`;
+}
+
 export async function safe<T>(promise: Promise<T>, fallback: T): Promise<T> {
   try {
     return await promise;

@@ -9,6 +9,7 @@ import { errorHandler } from './middleware/errorHandler';
 import predictionRoutes from './routes/prediction.routes';
 import leaderboardRoutes from './routes/leaderboard.routes';
 import standingsRoutes from "./routes/standings.routes";
+import crestRouter from './routes/crest';
 
 /**
  * The Express app, assembled in one place.
@@ -37,6 +38,7 @@ export function createApp() {
   app.use('/api/predictions', predictionRoutes);
   app.use('/api/leaderboard', leaderboardRoutes);
   app.use("/api/standings", standingsRoutes);
+  app.use('/api/crest', crestRouter);
 
   app.use(errorHandler);                   // must be registered LAST
   return app;
