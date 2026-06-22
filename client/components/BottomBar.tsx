@@ -14,6 +14,7 @@ export default function BottomBar() {
 
   const items = [
     { href: "/", label: "Home", icon: "⌂" },
+    { href: "/bracket", label: "Bracket", icon: "♛" },
     { href: "/leaderboard", label: "Ranks", icon: "≡" },
     ...(user
       ? [{ href: "/my-predictions", label: "Picks", icon: "◎" }]

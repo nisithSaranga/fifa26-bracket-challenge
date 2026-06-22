@@ -9,12 +9,12 @@ export default function Header() {
   const { user, logout, loading } = useAuth();
   const pathname = usePathname();
 
-  const navLinks = [
+ const navLinks = [
     { href: "/", label: "Home" },
+    { href: "/bracket", label: "Bracket" },
     { href: "/leaderboard", label: "Leaderboard" },
     ...(user ? [{ href: "/my-predictions", label: "My Picks" }] : []),
   ];
-
   return (
     <header className="sticky top-0 z-40 border-b border-line backdrop-blur-md bg-pitch/70">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-2">
