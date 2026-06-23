@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { Match } from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
 import PredictionForm from "./PredictionForm";
@@ -13,7 +13,19 @@ export default function MatchCard({ match }: { match: Match }) {
   const isLive = match.status === "IN_PLAY" || match.status === "PAUSED";
   const isFinished = match.status === "FINISHED";
   const kickoff = new Date(match.kickoff);
-  const locked = Date.now() >= kickoff.getTime(); // UI hint only — server is the real lock
+
+  // Lock is evaluated on the client only (avoids server/client hydration
+  // mismatch from Date.now()). Re-checks every 30s so a card locks itself
+  // as kickoff passes while the page is open. The server is the real lock.
+  const [locked, setLocked] = useState(false);
+  useEffect(() => {
+    const ko = new Date(match.kickoff).getTime();
+    const check = () => setLocked(Date.now() >= ko);
+    check();
+    const id = setInterval(check, 30_000);
+    return () => clearInterval(id);
+  }, [match.kickoff]);
+
   const predictable = !locked && !isLive && !isFinished;
 
   return (

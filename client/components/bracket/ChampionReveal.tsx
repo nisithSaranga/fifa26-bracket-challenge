@@ -11,7 +11,7 @@ type Tie = { winner: QualTeam; loser: QualTeam } | null;
 type Side = { qf: Tie[]; sf: Tie; finalist: QualTeam | null };
 export type Poster = { left: Side; right: Side };
 
-// Gold & Midnight palette (poster-only; independent of the site's blue theme).
+// Gold & Midnight palette (poster card only).
 const C = {
   bg: "#0d0a02",
   border: "#3a2e0a",
@@ -26,6 +26,16 @@ const C = {
   line: "#4a3c12",
 };
 
+// Result-screen palette.
+const E = {
+  bg1: "#02102d",
+  bg2: "#020819",
+  border: "rgba(90,140,255,.35)",
+  emerald: "#4a8cff",
+  emeraldBright: "#7dc2ff",
+  label: "#8db4ff",
+  deep: "#081b44",
+};
 export default function ChampionReveal({
   champion,
   runnerUp,
@@ -88,34 +98,82 @@ export default function ChampionReveal({
   return (
     <div className="space-y-6">
       {!showCard ? (
-        // ===== Simple result first (keeps the site's blue theme) =====
+        // ===== Emerald simple-result screen =====
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5 }}
-          className="card-angled panel-hero border border-line p-10 text-center"
+          style={{
+            background: `radial-gradient(circle at 50% 0%, rgba(40,120,255,.22), transparent 45%), linear-gradient(180deg, ${E.bg1} 0%, ${E.bg2} 60%, #000611 100%)`,
+            border: `1px solid ${E.border}`,
+            boxShadow: "0 0 60px rgba(70,130,255,.12), inset 0 0 40px rgba(40,100,255,.08)",
+          }}
+          className="rounded-2xl p-6 text-center relative overflow-hidden max-w-lg mx-auto"
         >
-          <SiteTrophy />
-          <p className="text-gradient-volt text-xs tracking-[0.4em] font-display font-bold uppercase mt-4 mb-2">
-            Your Champion
-          </p>
-          <h2 className="font-display font-black text-3xl sm:text-4xl tracking-tight">
-            <span className="text-gradient-volt">{champion.name.toUpperCase()}</span>
-          </h2>
-          <p className="text-ink font-body text-sm mt-2">
-            {who} predicts {champion.name} to win the 2026 World Cup 🏆
-          </p>
-          <div className="flex items-center justify-center gap-10 mt-6 pt-5 border-t border-line">
-            {runnerUp && <SiteMini label="Runner-up" team={runnerUp} />}
-            {thirdWinner && <SiteMini label="Third place" team={thirdWinner} />}
-          </div>
-          <div className="flex flex-wrap items-center justify-center gap-3 mt-8">
-            <button onClick={() => setShowCard(true)} className="btn-volt text-white font-display font-bold tracking-wide px-6 py-3 rounded-md">
-              🎉 CREATE SHAREABLE CARD
-            </button>
-            <button onClick={onReset} className="text-ink-dim hover:text-volt-bright transition-colors font-body text-sm px-4 py-2">
-              ↺ Start over
-            </button>
+          <Fireworks colors={[E.emerald, E.emeraldBright, "#a7f3d0", "#10b981"]} />
+
+          <div className="relative z-10 flex flex-col items-center">
+           <div className="relative flex items-center justify-center">
+              <div
+                className="absolute"
+                style={{
+                  width: 220, height: 180,
+                  background: "radial-gradient(ellipse at center, rgba(80,150,255,.35) 0%, rgba(40,100,255,.12) 40%, transparent 70%)",
+                  filter: "blur(4px)",
+                }}
+              />
+              <img src="/trophy.png" alt="Trophy" className="h-20 w-auto object-contain relative z-10" />
+            </div>
+            {/* Big champion flag */}
+            <motion.img
+              src={proxiedCrest(champion.crest)}
+              alt={champion.name}
+              crossOrigin="anonymous"
+              className="h-16 w-16 object-contain mt-3 mb-2"
+              initial={{ y: -16, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.3, duration: 0.5 }}
+            />
+
+            <p style={{ color: E.label }} className="text-xs tracking-[0.4em] font-display font-bold uppercase mb-2">
+              Your Champion
+            </p>
+            <h2 className="font-display font-black text-3xl sm:text-4xl tracking-tight">
+              <span
+                style={{
+                  background: "linear-gradient(90deg, #ffffff 0%, #7bbdff 45%, #4f8fff 100%)",
+                  WebkitBackgroundClip: "text",
+                  backgroundClip: "text",
+                  color: "transparent",
+                }}
+              >
+                {champion.name.toUpperCase()}
+              </span>
+            </h2>
+            <p className="text-ink font-body text-sm mt-2">
+              {who} predict {champion.name} to win the 2026 World Cup 🏆
+            </p>
+
+            <div className="flex items-center justify-center gap-10 mt-6 pt-5 border-t" style={{ borderColor: E.border }}>
+              {runnerUp && <ResultMini label="Runner-up" team={runnerUp} />}
+              {thirdWinner && <ResultMini label="Third place" team={thirdWinner} />}
+            </div>
+
+            <div className="flex flex-col items-center gap-3 mt-8">
+              <button
+                onClick={() => setShowCard(true)}
+                style={{ background: `linear-gradient(135deg, ${E.emerald}, ${E.emeraldBright})`, color: E.deep }}
+                className="font-display font-bold tracking-wide px-8 py-3 rounded-md"
+              >
+                🎉 CREATE SHAREABLE CARD
+              </button>
+              <button
+                onClick={onReset}
+                className="text-ink-dim hover:text-volt-bright transition-colors font-body text-sm"
+              >
+                ↺ Start over
+              </button>
+            </div>
           </div>
         </motion.div>
       ) : (
@@ -248,58 +306,60 @@ function TeamSlot({ team, win, align }: { team: QualTeam; win?: boolean; align: 
   );
 }
 
-/** Gold trophy for the poster. Swap for your own image later:
- *  return <img src="/trophy.png" alt="" className="h-14 w-auto object-contain" />; */
+/** Gold trophy on the poster — your /public image. */
 function GoldTrophy() {
   return (
-    <motion.svg
-      width="52" height="64" viewBox="0 0 64 80" className="mx-auto"
-      initial={{ scale: 0, rotate: -10 }} animate={{ scale: 1, rotate: 0 }}
+    <motion.img
+      src="/trophy.png"
+      alt="Trophy"
+      className="h-16 w-auto object-contain mx-auto"
+      initial={{ scale: 0, rotate: -10 }}
+      animate={{ scale: 1, rotate: 0 }}
       transition={{ type: "spring", stiffness: 200, damping: 12, delay: 0.1 }}
-    >
-      <defs>
-        <linearGradient id="goldGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#f5d76e" />
-          <stop offset="100%" stopColor="#d4af37" />
-        </linearGradient>
-      </defs>
-      <path d="M18 8 h28 v14 a14 14 0 0 1 -28 0 z" fill="url(#goldGrad)" />
-      <path d="M18 10 h-8 a8 8 0 0 0 8 12" fill="none" stroke="url(#goldGrad)" strokeWidth="3" />
-      <path d="M46 10 h8 a8 8 0 0 1 -8 12" fill="none" stroke="url(#goldGrad)" strokeWidth="3" />
-      <rect x="29" y="34" width="6" height="12" fill="url(#goldGrad)" />
-      <rect x="20" y="46" width="24" height="5" rx="2" fill="url(#goldGrad)" />
-      <rect x="24" y="52" width="16" height="6" rx="2" fill="url(#goldGrad)" />
-    </motion.svg>
+    />
   );
 }
 
-/** The simple-result trophy (site blue theme). */
-function SiteTrophy() {
-  return (
-    <svg width="56" height="70" viewBox="0 0 64 80" className="mx-auto">
-      <defs>
-        <linearGradient id="siteTrophyGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#22d3ee" />
-          <stop offset="100%" stopColor="#3b82f6" />
-        </linearGradient>
-      </defs>
-      <path d="M18 8 h28 v14 a14 14 0 0 1 -28 0 z" fill="url(#siteTrophyGrad)" />
-      <path d="M18 10 h-8 a8 8 0 0 0 8 12" fill="none" stroke="url(#siteTrophyGrad)" strokeWidth="3" />
-      <path d="M46 10 h8 a8 8 0 0 1 -8 12" fill="none" stroke="url(#siteTrophyGrad)" strokeWidth="3" />
-      <rect x="29" y="34" width="6" height="12" fill="url(#siteTrophyGrad)" />
-      <rect x="20" y="46" width="24" height="5" rx="2" fill="url(#siteTrophyGrad)" />
-      <rect x="24" y="52" width="16" height="6" rx="2" fill="url(#siteTrophyGrad)" />
-    </svg>
-  );
-}
-
-function SiteMini({ label, team }: { label: string; team: QualTeam }) {
+/** Runner-up / third-place mini block on the emerald result screen. */
+function ResultMini({ label, team }: { label: string; team: QualTeam }) {
   return (
     <div className="flex flex-col items-center gap-1">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={proxiedCrest(team.crest)} alt="" crossOrigin="anonymous" className="h-8 w-8 object-contain" />
-      <span className="text-ink-dim text-[10px] font-body uppercase tracking-wider">{label}</span>
+      <span style={{ color: E.label }} className="text-[10px] font-body uppercase tracking-wider">{label}</span>
       <span className="font-display font-bold text-sm text-ink">{team.tla}</span>
+    </div>
+  );
+}
+
+/** Firework bursts; accepts a color set so it can match each screen. */
+function Fireworks({ colors }: { colors: string[] }) {
+  const bursts = [
+    { x: "15%", y: "12%", delay: 0 },
+    { x: "82%", y: "18%", delay: 0.4 },
+    { x: "50%", y: "6%", delay: 0.8 },
+    { x: "28%", y: "22%", delay: 1.1 },
+    { x: "70%", y: "10%", delay: 1.5 },
+  ];
+  return (
+    <div className="absolute inset-0 pointer-events-none">
+      {bursts.map((b, bi) => (
+        <div key={bi} className="absolute" style={{ left: b.x, top: b.y }}>
+          {Array.from({ length: 12 }).map((_, i) => {
+            const angle = (i / 12) * Math.PI * 2;
+            return (
+              <motion.span
+                key={i}
+                className="absolute block h-1 w-1 rounded-full"
+                style={{ backgroundColor: colors[(bi + i) % colors.length] }}
+                initial={{ x: 0, y: 0, opacity: 1 }}
+                animate={{ x: Math.cos(angle) * 34, y: Math.sin(angle) * 34, opacity: 0 }}
+                transition={{ duration: 1.1, delay: b.delay, repeat: Infinity, repeatDelay: 1.6, ease: "easeOut" }}
+              />
+            );
+          })}
+        </div>
+      ))}
     </div>
   );
 }

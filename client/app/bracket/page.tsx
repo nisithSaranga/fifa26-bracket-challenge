@@ -47,12 +47,6 @@ export default function BracketPage() {
   }));
 
   // The 32 qualifiers (kept for compatibility; component resolves from the map).
-  const qualified = [
-    ...winners,
-    ...runnersUp,
-    ...thirdPlaced.filter((t) => chosenThirds.includes(t.tla)),
-  ].map((t) => ({ tla: t.tla, name: t.name, crest: t.crest }));
-
   return (
     <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 min-h-[70vh]">
       <header className="mb-8">
@@ -101,7 +95,6 @@ export default function BracketPage() {
         />
       ) : (
         <KnockoutBracket
-          qualified={qualified}
           winners={winners}
           runnersUp={runnersUp}
           thirds={thirdPlaced.filter((t) => chosenThirds.includes(t.tla))}

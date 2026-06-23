@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { useAuth } from "@/lib/auth-context";
 import ChampionReveal from "./ChampionReveal";
 
 export type QualTeam = { tla: string; name: string; crest: string };
@@ -52,17 +51,14 @@ const SF: [number, number, number][] = [
 ];
 
 export default function KnockoutBracket({
-  qualified,
   winners,
   runnersUp,
   thirds,
 }: {
-  qualified: QualTeam[]; // kept for compatibility; not used directly
   winners: SeededTeam[];
   runnersUp: SeededTeam[];
   thirds: SeededTeam[]; // the 8 chosen thirds, tagged with their group
 }) {
-  const { user } = useAuth();
 
   // Resolve the 16 R32 matchups from the official map + the user's picks.
   // Uses bipartite matching so every chosen third lands in a slot where its
