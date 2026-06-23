@@ -36,6 +36,7 @@ const E = {
   label: "#8db4ff",
   deep: "#081b44",
 };
+
 export default function ChampionReveal({
   champion,
   runnerUp,
@@ -55,8 +56,16 @@ export default function ChampionReveal({
   const [busy, setBusy] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showCard, setShowCard] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
 
   const siteUrl = "https://fifa26-bracket-challenge.vercel.app";
+
+  const shareSummary =
+    `🏆 ${who}'s 2026 World Cup prediction\n` +
+    `Champion: ${champion.name}\n` +
+    (runnerUp ? `Runner-up: ${runnerUp.name}\n` : "") +
+    (thirdWinner ? `Third: ${thirdWinner.name}\n` : "") +
+    `\nMake yours: ${siteUrl}`;
 
   async function downloadImage() {
     if (!cardRef.current) return;
@@ -75,19 +84,51 @@ export default function ChampionReveal({
     }
   }
 
-  async function shareText() {
-    const summary =
-      `🏆 ${who}'s 2026 World Cup prediction\n` +
-      `Champion: ${champion.name}\n` +
-      (runnerUp ? `Runner-up: ${runnerUp.name}\n` : "") +
-      (thirdWinner ? `Third: ${thirdWinner.name}\n` : "") +
-      `\nMake yours: ${siteUrl}`;
-    if (navigator.share) {
-      try { await navigator.share({ title: "My World Cup 2026 prediction", text: summary }); return; }
-      catch { /* cancelled */ }
-    }
+  // Mobile: shares the actual PNG file + the link via the native sheet
+  // (user picks WhatsApp → chat or Status). Desktop: downloads as a fallback.
+  async function shareImage() {
+    setShareOpen(false);
+    if (!cardRef.current) return;
+    setBusy(true);
     try {
-      await navigator.clipboard.writeText(summary);
+      const { toBlob } = await import("html-to-image");
+      const blob = await toBlob(cardRef.current, {
+        cacheBust: true,
+        pixelRatio: 2,
+        backgroundColor: C.bg,
+      });
+      if (!blob) throw new Error("no blob");
+      const file = new File([blob], "worldcup-2026-prediction.png", { type: "image/png" });
+
+      const nav = navigator as Navigator & { canShare?: (d?: ShareData) => boolean };
+      if (nav.canShare && nav.canShare({ files: [file] })) {
+        // Phone: shares image + text/link together → user picks WhatsApp.
+        await navigator.share({
+          files: [file],
+          title: "My World Cup 2026 prediction",
+          text: shareSummary,
+        });
+      } else {
+        // Desktop: can't push files to apps — download instead.
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "worldcup-2026-prediction.png";
+        a.click();
+        URL.revokeObjectURL(url);
+        alert("Image downloaded. On a phone you can share it straight to WhatsApp.");
+      }
+    } catch (err) {
+      console.error("Image share failed:", err);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function copyTextShare() {
+    setShareOpen(false);
+    try {
+      await navigator.clipboard.writeText(shareSummary);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
@@ -151,7 +192,7 @@ export default function ChampionReveal({
               </span>
             </h2>
             <p className="text-ink font-body text-sm mt-2">
-              {who} predict {champion.name} to win the 2026 World Cup 🏆
+              {who} predicts {champion.name} to win the 2026 World Cup 🏆
             </p>
 
             <div className="flex items-center justify-center gap-10 mt-6 pt-5 border-t" style={{ borderColor: E.border }}>
@@ -240,9 +281,28 @@ export default function ChampionReveal({
             <button onClick={downloadImage} disabled={busy} className="btn-volt text-white font-display font-bold tracking-wide px-6 py-3 rounded-md disabled:opacity-50">
               {busy ? "Generating…" : "⬇ DOWNLOAD IMAGE"}
             </button>
-            <button onClick={shareText} className="btn-cyan text-white font-display font-bold tracking-wide px-6 py-3 rounded-md">
-              {copied ? "COPIED ✓" : "↗ SHARE"}
-            </button>
+
+            <div className="relative">
+              <button
+                onClick={() => setShareOpen((o) => !o)}
+                disabled={busy}
+                className="btn-cyan text-white font-display font-bold tracking-wide px-6 py-3 rounded-md disabled:opacity-50"
+              >
+                {copied ? "COPIED ✓" : busy ? "Preparing…" : "↗ SHARE"}
+              </button>
+
+              {shareOpen && (
+                <>
+                  {/* click-away backdrop */}
+                  <div className="fixed inset-0 z-40" onClick={() => setShareOpen(false)} />
+                  <div className="absolute z-50 mt-2 left-1/2 -translate-x-1/2 w-52 rounded-lg border border-line bg-panel-raised shadow-xl overflow-hidden">
+                    <ShareItem label="Share image (WhatsApp…)" icon="📲" onClick={shareImage} />
+                    <ShareItem label="Copy text + link" icon="📋" onClick={copyTextShare} />
+                  </div>
+                </>
+              )}
+            </div>
+
             <button onClick={() => setShowCard(false)} className="text-ink-dim hover:text-volt-bright transition-colors font-body text-sm px-4 py-2">
               ← Back
             </button>
@@ -250,6 +310,19 @@ export default function ChampionReveal({
         </>
       )}
     </div>
+  );
+}
+
+/** A row in the share popup. */
+function ShareItem({ label, icon, onClick }: { label: string; icon: string; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className="w-full flex items-center gap-3 px-4 py-2.5 text-left text-sm font-body text-ink hover:bg-volt/10 transition-colors"
+    >
+      <span>{icon}</span>
+      <span>{label}</span>
+    </button>
   );
 }
 
