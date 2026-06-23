@@ -26,24 +26,22 @@ export default function Header() {
           <MuteToggle />
 
           {/* Desktop nav links — hidden on mobile, where the BottomBar handles navigation */}
-          <div className="hidden sm:flex items-center gap-2">
-            {navLinks.map((l) => {
-              const active = pathname === l.href;
-              return (
-                <Link
-                  key={l.href}
-                  href={l.href}
-                  className={`px-4 py-2 rounded-md transition-all ${
-                    active
-                      ? "nav-pill text-white"
-                      : "text-ink-dim hover:text-volt-bright"
-                  }`}
-                >
-                  {l.label}
-                </Link>
-              );
-            })}
-          </div>
+               <div className="hidden sm:flex items-center gap-2">
+        {navLinks.map((l) => {
+         const active = pathname === l.href;
+       return (
+         <Link
+           key={l.href}
+           href={l.href}
+           className={`px-4 py-2 rounded-md transition-all border border-transparent ${
+          active ? "nav-pill text-white" : "nav-link text-ink-dim hover:text-volt-bright"
+        }`}
+        >
+         {l.label}
+       </Link>
+       );
+       })}
+            </div>
 
           {loading ? null : user ? (
             <div className="flex items-center gap-2 sm:gap-3 sm:ml-2">

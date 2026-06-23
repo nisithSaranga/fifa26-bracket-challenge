@@ -34,15 +34,18 @@
 
 /*
  * Body — text, font, and the layered neon-blue gradient atmosphere.
+ * Upgraded: a strong top-center "broadcast" glow plus a vertical falloff
+ * that darkens toward the bottom for depth, over the existing corner glows.
  */
 body {
   color: var(--color-ink);
   font-family: var(--font-body), system-ui, sans-serif;
   background:
-    radial-gradient(900px circle at 8% -6%, rgba(59, 130, 246, 0.22), transparent 46%),
-    radial-gradient(800px circle at 100% 4%, rgba(6, 182, 212, 0.18), transparent 44%),
+    radial-gradient(1200px circle at 50% -8%, rgba(56, 138, 255, 0.28), transparent 50%),
+    radial-gradient(900px circle at 8% -6%, rgba(59, 130, 246, 0.20), transparent 46%),
+    radial-gradient(800px circle at 100% 4%, rgba(6, 182, 212, 0.16), transparent 44%),
     radial-gradient(1100px circle at 50% 120%, rgba(99, 102, 241, 0.12), transparent 52%),
-    var(--color-pitch);
+    linear-gradient(180deg, #061328 0%, #040a16 45%, #01060f 100%);
   background-attachment: fixed;
   min-height: 100vh;
 }
@@ -54,15 +57,19 @@ body {
   clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
 }
 
-/* Gradient panel fill for cards */
+/* Gradient panel fill for cards — now with a soft outer + inset glow so
+   panels feel "lit" rather than flat. */
 .panel-gradient {
   background: linear-gradient(155deg, rgba(59, 130, 246, 0.10), rgba(11, 20, 34, 0.85) 55%, rgba(8, 14, 26, 0.95));
+  box-shadow: 0 0 34px rgba(40, 100, 255, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
-/* Strong hero panel with neon edge glow */
+/* Strong hero panel with neon edge glow — pushed a little brighter. */
 .panel-hero {
-  background: linear-gradient(150deg, rgba(59, 130, 246, 0.18), rgba(6, 182, 212, 0.08) 50%, rgba(8, 14, 26, 0.7));
-  box-shadow: 0 0 50px rgba(59, 130, 246, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  background:
+    radial-gradient(700px circle at 50% -20%, rgba(56, 138, 255, 0.20), transparent 60%),
+    linear-gradient(150deg, rgba(59, 130, 246, 0.18), rgba(6, 182, 212, 0.08) 50%, rgba(8, 14, 26, 0.7));
+  box-shadow: 0 0 60px rgba(59, 130, 246, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 /* Card hover: lift + blue glow */
@@ -73,6 +80,12 @@ body {
   transform: translateY(-4px);
   border-color: rgba(96, 165, 250, 0.6);
   box-shadow: 0 10px 34px rgba(0, 0, 0, 0.5), 0 0 28px rgba(59, 130, 246, 0.22);
+}
+
+/* Optional: apply to any panel for the premium lit-card look from the hero. */
+.panel-glow {
+  box-shadow: 0 0 50px rgba(70, 130, 255, 0.14), inset 0 0 40px rgba(40, 100, 255, 0.06);
+  border-color: rgba(90, 140, 255, 0.30);
 }
 
 /* Solid gradient button (nav tiles, CTAs) */
@@ -94,9 +107,15 @@ body {
 }
 .nav-pill:hover { border-color: rgba(96, 165, 250, 0.8); box-shadow: 0 0 18px rgba(59, 130, 246, 0.3); }
 
-/* Gradient text */
+/* Nav links get the pill treatment on hover (matches the active state) */
+.nav-link:hover {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.22), rgba(6, 182, 212, 0.12));
+  border-color: rgba(96, 165, 250, 0.8);
+  box-shadow: 0 0 18px rgba(59, 130, 246, 0.3);
+}
+/* Gradient text — richer white→blue fade for a broadcast-title feel. */
 .text-gradient-volt {
-  background: linear-gradient(135deg, #7dd3fc, #3b82f6);
+  background: linear-gradient(100deg, #ffffff 0%, #7dd3fc 45%, #3b82f6 100%);
   -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
 }
 
