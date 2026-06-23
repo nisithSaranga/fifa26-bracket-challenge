@@ -23,4 +23,5 @@ export const env = {
   footballDataKey: process.env.FOOTBALL_DATA_KEY || '',
   apiFootballKey: process.env.API_FOOTBALL_KEY || '',
   clientOrigin: process.env.CLIENT_ORIGIN || 'http://localhost:3000',
+  googleClientId: process.env.GOOGLE_CLIENT_ID || '',
 };

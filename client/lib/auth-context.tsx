@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { loginUser, registerUser, type AuthUser } from "./api";
+import { loginUser, registerUser, googleLogin, type AuthUser } from "./api";
 
 /*
  * Holds the logged-in user + access token in memory, and exposes
@@ -18,6 +18,7 @@ interface AuthState {
   loading: boolean;
   login: (emailOrUsername: string, password: string) => Promise<void>;
   register: (username: string, email: string, password: string) => Promise<void>;
+  loginWithGoogle: (credential: string) => Promise<void>;
   logout: () => void;
 }
 
@@ -69,6 +70,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(user);
   }
 
+  async function loginWithGoogle(credential: string) {
+    const { accessToken, user } = await googleLogin(credential);
+    setToken(accessToken);
+    setUser(user);
+  }
+
   function logout() {
     fetch(`${API_URL}/api/auth/logout`, { method: "POST", credentials: "include" }).catch(() => {});
     setToken(null);
@@ -76,7 +83,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, token, loading, login, register, loginWithGoogle, logout }}>
       {children}
     </AuthContext.Provider>
   );

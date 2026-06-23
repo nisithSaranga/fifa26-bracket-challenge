@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
 import Field from "@/components/Field";
+import GoogleSignInButton from "@/components/GoogleSignInButton";
 
 export default function RegisterPage() {
   const { register } = useAuth();
@@ -67,10 +68,11 @@ export default function RegisterPage() {
           {submitting ? "CREATING..." : "CREATE ACCOUNT"}
         </button>
 
-        <p className="text-ink-dim text-sm font-body mt-6 text-center">
+        <p className="text-ink-dim text-sm font-body mt-6 mb-4 text-center">
           Already playing?{" "}
           <Link href="/login" className="text-volt hover:underline">Sign in</Link>
         </p>
+       <GoogleSignInButton />
       </div>
     </main>
   );

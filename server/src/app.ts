@@ -39,7 +39,6 @@ export function createApp() {
   app.use('/api/leaderboard', leaderboardRoutes);
   app.use("/api/standings", standingsRoutes);
   app.use('/api/crest', crestRouter);
-
   app.use(errorHandler);                   // must be registered LAST
   return app;
 }

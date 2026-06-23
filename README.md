@@ -23,7 +23,8 @@
 | 🗂️ | **Live Group Standings** | Group tables derived on the fly from match results |
 | 🔐 | **Secure Auth** | JWT access tokens + rotating, hashed refresh tokens (httpOnly cookies) |
 | 🎵 | **Cinematic UI** | Animated splash, stadium audio, and a neon match-day theme |
-
+| 🔓 | **Google Sign-In** | One-tap OAuth login via Google (find-or-link-or-create), issuing the same secure session |
+| 🎯 | **Tournament Bracket Predictor** | Drag to order groups, pick the 8 best third-placed teams, then advance through the official FIFA Round-of-32 → Final and reveal your champion on a shareable poster |
 ---
 
 ## 🛠️ Stack
@@ -122,16 +123,6 @@ npm test        # run scoring unit tests
 - **Backend → Back4app Containers** — built from `server/Dockerfile` (multi-stage: compile TS, then a lean production image).
 - **Database → MongoDB Atlas.**
 - **CORS** restricted to the deployed frontend origin via `CLIENT_ORIGIN`.
-
----
-
-## 🗺️ Roadmap
-
-- [ ] Tournament bracket predictor (group stage → knockouts → champion)
-- [ ] Team squads with player photos & bios
-- [ ] Private leagues for friends
-- [ ] Third-place tracker (8 best third-placed teams — the new 2026 format)
-- [ ] Google sign-in
 
 ---
 

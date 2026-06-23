@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
 import Field from "@/components/Field";
+import GoogleSignInButton from "@/components/GoogleSignInButton";
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -51,11 +52,13 @@ export default function LoginPage() {
           {submitting ? "SIGNING IN..." : "SIGN IN"}
         </button>
 
-        <p className="text-ink-dim text-sm font-body mt-6 text-center">
+        <p className="text-ink-dim text-sm font-body mt-6 mb-4 text-center">
           New here?{" "}
           <Link href="/register" className="text-volt hover:underline">Create an account</Link>
         </p>
+        <GoogleSignInButton/>
       </div>
+      
     </main>
   );
 }

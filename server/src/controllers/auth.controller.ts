@@ -9,6 +9,9 @@ import {
   verifyRefreshToken,
 } from '../utils/jwt';
 import { env } from '../config/env';
+import { OAuth2Client } from 'google-auth-library';
+
+const googleClient = new OAuth2Client(env.googleClientId);
 
 const REFRESH_COOKIE = 'fifa26_refresh';
 
@@ -91,6 +94,53 @@ export async function login(req: Request, res: Response, next: NextFunction) {
   }
 }
 
+/** POST /api/auth/google — verify a Google ID token, find/create user, issue our tokens. */
+export async function googleAuth(req: Request, res: Response, next: NextFunction) {
+  try {
+    const { credential } = req.body; // Google ID token from the frontend
+    if (!credential) throw new ApiError(400, 'Missing Google credential');
+
+    // Verify the token with Google.
+    const ticket = await googleClient.verifyIdToken({
+      idToken: credential,
+      audience: env.googleClientId,
+    });
+    const payload = ticket.getPayload();
+    if (!payload || !payload.email) throw new ApiError(401, 'Invalid Google token');
+
+    const googleId = payload.sub;
+    const email = payload.email.toLowerCase();
+    const name = payload.name;
+
+    // Find by googleId or existing email (link if they signed up locally before).
+    let user = await User.findOne({ $or: [{ googleId }, { email }] });
+
+    if (!user) {
+      // New user — build a unique username from their name/email.
+      const base =
+        (name || email.split('@')[0]).replace(/[^a-zA-Z0-9_]/g, '').slice(0, 16) || 'player';
+      let username = base;
+      let n = 1;
+      while (await User.findOne({ username })) {
+        username = `${base}${n++}`.slice(0, 20);
+      }
+      user = await User.create({ username, email, googleId, authProvider: 'google' });
+    } else if (!user.googleId) {
+      // Existing local account, first Google sign-in → link it.
+      user.googleId = googleId;
+      await user.save();
+    }
+
+    // Reuse the SAME token/cookie logic as login — identical session behavior.
+    const accessToken = await issueTokens(res, user.id);
+    res.json({
+      accessToken,
+      user: { id: user.id, username: user.username, email: user.email },
+    });
+  } catch (err) {
+    next(err);
+  }
+}
 /** POST /api/auth/refresh — mint a new access token from the cookie. */
 export async function refresh(req: Request, res: Response, next: NextFunction) {
   try {

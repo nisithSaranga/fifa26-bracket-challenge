@@ -91,6 +91,21 @@ async function post<T>(path: string, body: unknown): Promise<T> {
   return data as T;
 }
 
+/** Send the Google ID token (credential) to our backend; returns our session. */
+export async function googleLogin(credential: string): Promise<{ accessToken: string; user: AuthUser }> {
+  const res = await fetch(`${API_URL}/api/auth/google`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ credential }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error || "Google sign-in failed");
+  }
+  return res.json();
+} 
+
 export function registerUser(input: {
   username: string;
   email: string;
