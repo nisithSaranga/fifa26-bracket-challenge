@@ -71,7 +71,7 @@ export default function ChampionReveal({
     if (!cardRef.current) return;
     setBusy(true);
     try {
-      const dataUrl = await toPng(cardRef.current, { cacheBust: true, pixelRatio: 2, backgroundColor: C.bg });
+      const dataUrl = await toPng(cardRef.current, { cacheBust: true, pixelRatio: 2, backgroundColor: C.bg, skipFonts: true });
       const link = document.createElement("a");
       link.download = `${who}-worldcup-2026-prediction.png`;
       link.href = dataUrl;
@@ -96,6 +96,7 @@ export default function ChampionReveal({
         cacheBust: true,
         pixelRatio: 2,
         backgroundColor: C.bg,
+        skipFonts: true,
       });
       if (!blob) throw new Error("no blob");
       const file = new File([blob], "worldcup-2026-prediction.png", { type: "image/png" });
