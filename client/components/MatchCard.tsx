@@ -113,7 +113,12 @@ function TeamSide({ team, right = false }: { team: Match["homeTeam"]; right?: bo
   return (
     <div className={`flex items-center gap-3 flex-1 ${right ? "flex-row-reverse" : ""}`}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={team.crest} alt={team.name} className="h-9 w-9 object-contain" />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      {team.crest ? (
+        <img src={team.crest} alt={team.name} className="h-9 w-9 object-contain" />
+      ) : (
+        <span className="h-9 w-9 shrink-0" aria-hidden />
+      )}
       <span className="font-display font-bold text-lg leading-tight">
         {team.tla || team.shortName}
       </span>
