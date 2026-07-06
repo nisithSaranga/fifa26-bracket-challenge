@@ -4,7 +4,7 @@
 
 **Predict every match of the 2026 World Cup. Lock in your scores, climb the live leaderboard, and see results update in real time.**
 
-🔗 **[Live Demo](https://fifa26-bracket-challenge.vercel.app)**
+🎥 **[Watch the full demo (1:52)](demo.mp4)**
 
 *A full-stack prediction platform built with the MERN stack in TypeScript.*
 
@@ -34,19 +34,19 @@
 | **Frontend** | Next.js (App Router) · React · TypeScript · Tailwind CSS · Framer Motion |
 | **Backend** | Node.js · Express · TypeScript · Socket.io · node-cron |
 | **Database** | MongoDB Atlas (Mongoose) |
-| **Infra** | Docker · Vercel (frontend) · Back4app Containers (backend) |
+| **Infra** | Docker · deployment-ready: Vercel (frontend) + any container host (backend) |
 | **Data** | football-data.org (fixtures & results) |
 
 ---
 
 ## 🏗️ Architecture
 
-A **decoupled** frontend and backend, deployed independently. Users only ever visit the frontend — it calls the API in the background.
+A **decoupled** frontend and backend, designed to deploy independently. Users only ever visit the frontend — it calls the API in the background.
 
 ```
 ┌────────────────────┐        ┌───────────────────────────┐        ┌──────────────┐
 │  Next.js frontend  │  HTTPS  │   Express API + worker     │  TLS   │  MongoDB     │
-│     (Vercel)       │ ──────> │   (Docker on Back4app)     │ ─────> │  Atlas       │
+│   (any web host)   │ ──────> │   (Docker container)       │ ─────> │  Atlas       │
 │                    │ <────── │                            │ <───── │              │
 │  • UI / pages      │  JSON   │  • REST routes · JWT auth  │        │  • users     │
 │  • calls /api/*    │   WS    │  • Socket.io real-time     │        │  • matches   │
@@ -65,7 +65,9 @@ A **decoupled** frontend and backend, deployed independently. Users only ever vi
 
 - **♻️ Refresh-token rotation** — short-lived access tokens (15 min) paired with longer-lived refresh tokens (7 days) stored hashed in httpOnly cookies, rotated on each use to limit the blast radius of a leaked token.
 
-- **⏱️ Autonomous worker** — a node-cron job runs every minute to sync results and grade finished matches, with an **overlap guard** (skips if the previous run is still going) and crash-proof error handling. Running in the cloud keeps data fresh 24/7.
+- **🛡️ Hardened endpoints** — Helmet sets security HTTP headers on every response, and auth routes are rate-limited (20 attempts per IP per 15 min) against brute-force.
+
+- **⏱️ Autonomous worker** — a node-cron job runs every minute to sync results and grade finished matches, with an **overlap guard** (skips if the previous run is still going) and crash-proof error handling. Left running, it keeps data fresh around the clock.
 
 - **🧪 Pure, tested scoring** — the points logic is a pure function with **Jest unit tests**, verifiable independently of the database or HTTP layer.
 
@@ -117,10 +119,12 @@ npm test        # run scoring unit tests
 
 ---
 
-## 📦 Deployment
+## 📦 Deployment guide
+
+> ☁️ A hosted deployment is planned — the stack below is what the project is built for.
 
 - **Frontend → Vercel** — root directory `client`, `NEXT_PUBLIC_API_URL` pointed at the backend.
-- **Backend → Back4app Containers** — built from `server/Dockerfile` (multi-stage: compile TS, then a lean production image).
+- **Backend → any container host** — built from `server/Dockerfile` (multi-stage: compile TS, then a lean production image).
 - **Database → MongoDB Atlas.**
 - **CORS** restricted to the deployed frontend origin via `CLIENT_ORIGIN`.
 
