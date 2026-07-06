@@ -4,7 +4,7 @@
 
 **Predict every match of the 2026 World Cup. Lock in your scores, climb the live leaderboard, and see results update in real time.**
 
-🎥 **[Watch the full demo (1:52)](demo.mp4)**
+https://github.com/user-attachments/assets/c537c9b0-f0ae-45e9-a771-645ec106ab78
 
 *A full-stack prediction platform built with the MERN stack in TypeScript.*
 
