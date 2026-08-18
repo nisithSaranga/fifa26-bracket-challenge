@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fifa-server
+  labels:
+    app: fifa-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fifa-server
+  template:
+    metadata:
+      labels:
+        app: fifa-server
+    spec:
+      containers:
+        - name: fifa-server
+          image: fifa-server:local
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 5000
+          envFrom:
+            - configMapRef:
+                name: fifa-server-config
+            - secretRef:
+                name: fifa-server-secrets

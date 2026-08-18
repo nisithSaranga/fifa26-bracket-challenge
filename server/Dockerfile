@@ -21,6 +21,9 @@ RUN npm install --omit=dev
 # Copy the compiled output from the build stage
 COPY --from=builder /app/dist ./dist
 
-# Back4app provides PORT via env; our code already reads process.env.PORT
+RUN addgroup -g 1001 -S nodejs && adduser -S nodejs -u 1001
+USER nodejs
+
+# PORT is read from process.env.PORT at runtime
 EXPOSE 5000
 CMD ["node", "dist/index.js"]
